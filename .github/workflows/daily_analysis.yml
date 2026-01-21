@@ -132,26 +132,26 @@ jobs:
           fi
 
       - name: 自动整理并提交报告
-        if: success()  # 只有在分析运行成功时才执行
+        if: success()
         run: |
           # 1. 配置 Git 身份
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          # 2. 创建按月分类的文件夹 (例如 reports/2026-01)
-          # 获取当前日期
+          # 2. 创建按月分类的文件夹
           FOLDER_NAME="reports/$(date '+%Y-%m')"
           mkdir -p $FOLDER_NAME
 
           # 3. 将新生成的 md 报告移动到该文件夹
-          # 假设文件名包含日期，如 market_review_20260121.md
           mv reports/*.md $FOLDER_NAME/ 2>/dev/null || true
 
           # 4. 提交并推送到仓库
-          git add reports/
+          # 使用 -f 强制添加，以防 .gitignore 还有残留规则
+          git add -f reports/
           
-          # 检查是否有内容变更，避免空提交报错
+          # 检查是否有内容变更
           if ! git diff --cached --exit-code; then
+            # 注意这里必须是 git commit 而不是单纯的 git
             git commit -m "docs: 自动更新股票分析报告 $(date '+%Y-%m-%d %H:%M')"
             git push
             echo "✅ 报告已成功提交至仓库 $FOLDER_NAME"
