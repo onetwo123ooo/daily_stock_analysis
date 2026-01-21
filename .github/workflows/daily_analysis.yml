@@ -153,7 +153,7 @@ jobs:
           if ! git diff --cached --exit-code; then
             # 注意这里必须是 git commit 而不是单纯的 git
             git commit -m "docs: 自动更新股票分析报告 $(date '+%Y-%m-%d %H:%M')"
-            git push
+            git push -f # 关键修改：使用 -f 强制推送，解决版本冲突问题
             echo "✅ 报告已成功提交至仓库 $FOLDER_NAME"
           else
             echo "⚠️ 没有发现新报告，跳过提交。"
